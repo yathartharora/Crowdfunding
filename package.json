@@ -1,0 +1,20 @@
+{
+  "name": "campaign",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "fs-extra": "^9.0.1",
+    "ganache-cli": "^6.10.1",
+    "solc": "^0.4.25",
+    "web3": "^1.0.0-beta.26"
+  },
+  "devDependencies": {
+    "mocha": "^8.1.1"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}
