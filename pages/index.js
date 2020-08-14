@@ -1,76 +1,57 @@
-import React, {Component} from 'react';
-import Layout from '../../../Components/Layout';
-import {Link} from '../../../routes';
-import { Button, Table } from 'semantic-ui-react';
-import Campaign from '../../../ethereum/campaign';
-import RequestRow from '../../../Components/requestRow';
+import React, { Component } from 'react';
+import factory from '../ethereum/factory';
+import { Card, Button } from 'semantic-ui-react';
+import Layout from '../Components/Layout';
+import {Link} from '../routes';
 
 
-class RequestIndex extends Component {
+class CampaignIndex extends Component {
 
-    static async getInitialProps(props) {
-        const {address} = props.query;
-        const campaign = Campaign(address);
+    static async getInitialProps() {
+        const campaigns = await factory.methods.getDeployedContracts().call();
 
-        const requestCount = await campaign.methods.getRequestCount().call();
-        const approversCount = await campaign.methods.approversCount().call();
+        return {campaigns: campaigns};
 
-        const requests = await Promise.all(
-            Array(parseInt(requestCount)).fill().map((element,index) => {
-                return campaign.methods.requests(index).call()
-            }) 
-        );
-        return {address, requests, requestCount, approversCount};
     }
 
-    renderRow() {
-        return this.props.requests.map((request, index) => {
-            return ( <RequestRow 
-                key={index}
-                id={index}
-                request = {request}
-                address = {this.props.address}
-                approversCount = {this.props.approversCount}
-            />
-            );
-        });
-    }
-    render() {
-        const {Header, Row, HeaderCell, Body} = Table;
-
-        return(
-            <Layout>
-                <h3>Requests</h3>
-                <Link route={`/campaigns/${this.props.address}/requests/new`} >
-                    <a>
-                        <Button primary>
-                            Add Request
-                        </Button>
-                    </a>
+    renderCampaigns() {
+        const items = this.props.campaigns.map(address => {
+            return {
+                header: address,
+                description: (
+                <Link route={`/campaigns/${address}`}>
+                    <a>View Campaign</a>
                 </Link>
+                ),
+                fluid: true
+            };
+        });
+        return <Card.Group items={items} />;
+    }
 
-                <Table celled>
-                    <Header>
-                        <Row>
-                            <HeaderCell>ID</HeaderCell>
-                            <HeaderCell>Description</HeaderCell>
-                            <HeaderCell>Amount</HeaderCell>
-                            <HeaderCell>Recepient</HeaderCell>
-                            <HeaderCell>ApprovalCount</HeaderCell>
-                            <HeaderCell>Approve</HeaderCell>
-                            <HeaderCell>Finalize</HeaderCell>
-                        </Row>
-                    </Header>
 
-                    <Body>
-                        {this.renderRow()}
-                    </Body>
-                </Table>
-                <div>Found {this.props.requestCount} Request(s)</div>
-            </Layout>
 
-        );
-    };
+    render() {
+    return (
+        <Layout>
+        <div>
+        <h3>Open Campaigns</h3>
+        <Link route="/campaigns/new">
+            <a>
+                <Button
+                    content = 'Create Campaign'
+                    icon = "add"
+                    floated ="right"
+                    primary
+                />
+            </a>
+        </Link>
+        {this.renderCampaigns()}
+        </div>
+        </Layout>
+    );
+  }
+
 }
 
-export default RequestIndex;
+export default CampaignIndex;
