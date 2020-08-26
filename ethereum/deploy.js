@@ -3,7 +3,7 @@ const Web3 = require('web3');
 const compiledFactory = require('./build/Factory.json');
 
 const provider = new HDWalletProvider(
-    'era road real nation cute review tired range key velvet junk deposit',
+    '<Add your metamask seed phrase>',
     'https://ropsten.infura.io/v3/e564d206cb724eacafb1cc77bf7fa13e'
 );
 
